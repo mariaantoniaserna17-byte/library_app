@@ -1,56 +1,100 @@
-# Welcome to your Expo app 👋
+# Library App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Aplicación móvil de la **Guía 2: app de biblioteca**. Es un proyecto
+independiente de Expo/React Native que consume la API del proyecto
+`library_api`.
 
-## Get started
+Incluye:
 
-1. Install dependencies
+- Inicio de sesión y registro.
+- Catálogo de libros con búsqueda y detalle.
+- Caché local con SQLite.
+- Cola de solicitudes para trabajar temporalmente sin conexión.
+- Sincronización con el servidor y resolución de conflictos a favor del
+  servidor.
+- Sesiones y tokens protegidos con SecureStore.
+- Solicitud y seguimiento de préstamos.
+- Cambio de portadas desde la cámara o la galería para bibliotecarios.
 
-   ```bash
-   npm install
-   ```
+La aplicación nunca se conecta directamente a Firebase: todas las peticiones
+van a `library_api`.
 
-2. Start the app
+## Requisitos
 
-   ```bash
-   npx expo start
-   ```
+- Node.js 20 o superior.
+- npm.
+- Expo Go para probar las funciones compatibles con Expo Go, o un development
+  build para módulos nativos que no estén incluidos en Expo Go.
+- `library_api` ejecutándose y accesible desde el dispositivo.
 
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Instalación
 
 ```bash
-npm run reset-project
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Copia `.env.example` como `.env` y configura la URL de la API:
 
-### Other setup steps
+```env
+EXPO_PUBLIC_API_URL=http://192.168.1.20:3000
+```
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+Usa la dirección según el entorno:
 
-## Learn more
+- Teléfono físico: IP local del computador en la misma red Wi-Fi.
+- Emulador Android: `http://10.0.2.2:3000`.
+- Simulador iOS: `http://localhost:3000`.
 
-To learn more about developing your project with Expo, look at the following resources:
+En un teléfono físico, inicia la API con `pnpm dev:lan` dentro de
+`library_api` para aceptar conexiones de la red local. Las variables
+`EXPO_PUBLIC_*` quedan incluidas en la aplicación; nunca pongas secretos allí.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Comandos
 
-## Join the community
+```bash
+npm start          # inicia Expo
+npm run android    # abre el proyecto en Android
+npm run ios        # abre el proyecto en iOS
+npm run web        # inicia la versión web
+npm test           # ejecuta las pruebas
+npm run typecheck  # verifica TypeScript
+npm run lint       # ejecuta ESLint
+```
 
-Join our community of developers creating universal apps.
+También puedes iniciar Expo con:
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```bash
+npx expo start
+```
+
+## Orden recomendado
+
+1. Inicia `library_api` y verifica `GET /api/health`.
+2. Configura `EXPO_PUBLIC_API_URL` en `.env`.
+3. Instala las dependencias de esta aplicación.
+4. Ejecuta `npm start`.
+5. Abre la aplicación con Expo Go, un emulador o un development build.
+
+## Estructura
+
+- `src/app/`: rutas y pantallas de Expo Router.
+- `src/components/`: componentes reutilizables.
+- `src/config/`: configuración por ambiente.
+- `src/db/`: SQLite, migraciones y repositorios locales.
+- `src/services/api/`: cliente HTTP y comunicación con la API.
+- `src/services/auth/`: administración de sesión y tokens.
+- `src/providers/`: estado y sincronización de datos.
+- `tests/`: pruebas unitarias e integración con la API.
+
+## Verificación
+
+Antes de publicar cambios, ejecuta:
+
+```bash
+npm run typecheck
+npm run lint
+npm test
+```
+
+El archivo `.env` es local y está excluido de Git. Solo `.env.example`, que no
+contiene credenciales, debe compartirse con el repositorio.
